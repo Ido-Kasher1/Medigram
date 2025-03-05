@@ -24,6 +24,7 @@ const userSchema = new mongoose.Schema<IUser>({
   },
   is_doctor: {
     type: Boolean,
+    required: true,
     default: false,
   }
 });
