@@ -27,22 +27,27 @@ import authController from "../controllers/auth_controller";
 *       type: object
 *       required:
 *         - email
+*         - username
 *         - password
-*         - is_doctor      
+*         - isDoctor      
 *       properties:
 *         email:
 *           type: string
 *           description: The user email
+*         username:
+*           type: string
+*           description: The user username
 *         password:
 *           type: string
 *           description: The user password
-*         is_doctor:
+*         isDoctor:
 *          type: boolean
 *          description: The user is a doctor or not
 *       example:
 *         email: 'bob@gmail.com'
+*         username: 'bobTheBuilder'
 *         password: '123456'
-*         is_doctor: false
+*         isDoctor: false
 */
 
 /**
@@ -80,7 +85,20 @@ router.post("/register", authController.register);
  *       content:
  *         application/json:
  *           schema:
- *             $ref: '#/components/schemas/User'
+ *             type: object
+ *             properties:
+ *               email:
+ *                 type: string
+ *                 description: The user email
+ *               password:
+ *                 type: string
+ *                 description: The user password
+ *             required:
+ *               - email
+ *               - password
+ *           example:
+ *             email: "bob@gmail.com"
+ *             password: "123456"
  *     responses:
  *       200:
  *         description: Successful login
@@ -91,13 +109,13 @@ router.post("/register", authController.register);
  *               properties:
  *                 accessToken:
  *                   type: string
- *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
  *                 refreshToken:
  *                   type: string
- *                   example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ *                   example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
  *                 _id:
  *                   type: string
- *                   example: 60d0fe4f5311236168a109ca
+ *                   example: "60d0fe4f5311236168a109ca"
  *       400:
  *         description: Invalid credentials or request
  *       500:

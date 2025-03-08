@@ -7,9 +7,11 @@ import postsRoute from "./routes/post_route";
 import commentsRoute from "./routes/comment_route";
 import usersRoute from "./routes/user_route";
 import authRoutes from "./routes/auth_route";
-// import fileRoute from "./routes/file_route";
+import fileRoute from "./routes/file_route";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
+import { authMiddleware } from "./controllers/auth_controller";
+import secureStaticMiddleware from "./controllers/file_controller";
 const port = process.env.PORT;
 
 
@@ -22,12 +24,7 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Methods", "*");
   next();
 });
-app.use("/posts", postsRoute);
-app.use("/comments", commentsRoute);
-app.use("/users", usersRoute);
-app.use("/auth", authRoutes);
-// app.use("/file", fileRoute);
-// app.use("/public", express.static("public"));
+
 // app.use(express.static("front"));
 
 const options = {
@@ -38,12 +35,28 @@ const options = {
       version: "1.0.0",
       description: "REST server including authentication using JWT",
     },
-    servers: [{ url: `http://localhost:${port}`, },],
+    servers: [{ url: `http://localhost:${port}` }],
+    components: {
+      securitySchemes: {
+        bearerAuth: {
+          type: "http",
+          scheme: "bearer",
+          bearerFormat: "JWT",
+        },
+      },
+    },
   },
   apis: ["./src/routes/*.ts"],
 };
 const specs = swaggerJsDoc(options);
 app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs));
+app.use("/posts", postsRoute);
+app.use("/comments", commentsRoute);
+app.use("/users", usersRoute);
+app.use("/auth", authRoutes);
+app.use("/files", fileRoute);
+// app.use("/public", authMiddleware, secureStaticMiddleware, express.static("public"));
+app.use("/public", express.static("public"));
 
 const db = mongoose.connection;
 db.on("error", (error) => console.error(error));

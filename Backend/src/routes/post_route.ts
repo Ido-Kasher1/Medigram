@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 import postsController from "../controllers/posts_controller";
+import { authMiddleware } from "../controllers/auth_controller";
 
 
 /**
@@ -59,7 +60,7 @@ import postsController from "../controllers/posts_controller";
  *       500:
  *         description: Server error
  */
-router.get("/", postsController.getAll.bind(postsController));
+router.get("/" ,postsController.getAll.bind(postsController));
 
 
 /**
@@ -100,7 +101,7 @@ router.get("/", postsController.getAll.bind(postsController));
  *       500:
  *         description: Server error
  */
-router.post("/", postsController.create.bind(postsController));
+router.post("/",authMiddleware , postsController.create.bind(postsController));
 
 /**
  * @swagger
@@ -157,6 +158,6 @@ router.get("/:id", postsController.getById.bind(postsController));
  *       500:
  *         description: Server error
  */
-router.delete("/:id", postsController.deleteItem.bind(postsController));
+router.delete("/:id", authMiddleware, postsController.deleteItem.bind(postsController));
 
 export default router;

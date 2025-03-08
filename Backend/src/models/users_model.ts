@@ -3,13 +3,19 @@ import mongoose from "mongoose";
 export interface IUser {
   email: string;
   password: string;
+  username: string;
   _id?: string;
   refreshToken?: string[];
-  is_doctor?: boolean;
+  isDoctor?: boolean;
 }
 
 const userSchema = new mongoose.Schema<IUser>({
   email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  username: {
     type: String,
     required: true,
     unique: true,
@@ -22,7 +28,7 @@ const userSchema = new mongoose.Schema<IUser>({
     type: [String],
     default: [],
   },
-  is_doctor: {
+  isDoctor: {
     type: Boolean,
     required: true,
     default: false,

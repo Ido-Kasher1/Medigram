@@ -12,8 +12,9 @@ const register = async (req: Request, res: Response) => {
         const hashedPassword = await bcrypt.hash(password, salt);
         const user = await userModel.create({
             email: req.body.email,
+            username: req.body.username,
             password: hashedPassword,
-            is_doctor: req.body.is_doctor,
+            isDoctor: req.body.isDoctor,
         });
         res.status(200).send(user);
     } catch (err) {
@@ -111,7 +112,7 @@ const verifyRefreshToken = (refreshToken: string | undefined) => {
         }
         jwt.verify(refreshToken, process.env.TOKEN_SECRET, async (err: any, payload: any) => {
             if (err) {
-                reject("fail");
+                    reject("fail");
                 return
             }
             //get the user id fromn token
@@ -187,6 +188,7 @@ type Payload = {
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const authorization = req.header('authorization');
+    console.log(authorization);
     const token = authorization && authorization.split(' ')[1];
 
     if (!token) {

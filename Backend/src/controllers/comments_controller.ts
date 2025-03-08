@@ -2,19 +2,27 @@ import commentsModel, { IComments } from "../models/comments_model";
 import { Request, Response } from "express";
 import BaseController from "./base_controller";
 import postModel from "../models/posts_model";
+import userModel from "../models/users_model";
 
 class CommentsController extends BaseController<IComments>{
     constructor() {
         super(commentsModel);
     }
     async create(req: Request, res: Response) {
-        const postId = req.params.postId;
+        const postId = req.body.postId;
         const post = await postModel.findById(postId);
+        const user = await userModel.findById(req.params.userId);
+        if (!user) {
+            res.status(404).send("user not found");
+            return;
+        }
         if (!post) {
             res.status(404).send("post not found");
+            return;
         }
         const comment = {
             ...req.body,
+            isOwnerDoctor: user.isDoctor,
         }
         req.body = comment;
         super.create(req, res);

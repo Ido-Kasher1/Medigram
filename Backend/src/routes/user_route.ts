@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 import usersController from "../controllers/users_conroller";
+import { authMiddleware } from "../controllers/auth_controller";
 
 /**
  * @swagger
@@ -17,8 +18,9 @@ import usersController from "../controllers/users_conroller";
  *       type: object
  *       required:
  *         - email
+ *         - username
  *         - password
- *         - is_doctor
+ *         - isDoctor
  *       properties:
  *         _id:
  *           type: string
@@ -26,21 +28,27 @@ import usersController from "../controllers/users_conroller";
  *         email:
  *           type: string
  *           description: The email of the user
+ *         username:
+ *           type: string
+ *           description: The username of the user
  *         password:
  *           type: string
  *           description: The password of the user
  *         refreshToken:
  *           type: array
+ *           items:
+ *             type: string
  *           description: The refresh token of the user
- *         is_doctor:
+ *         isDoctor:
  *           type: boolean
- *           description: The user is a doctor or not
+ *           description: Indicates if the user is a doctor
  *       example:
  *         _id: "245"
  *         email: "user@gmail.com"
+ *         username: "user123"
  *         password: "password123456789"
  *         refreshToken: []
- *         is_doctor: false
+ *         isDoctor: false
  */
 
 /**
@@ -51,6 +59,8 @@ import usersController from "../controllers/users_conroller";
  *     description: Check if the user is a doctor
  *     tags:
  *       - Users
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Get if the user is a doctor or not
@@ -58,11 +68,45 @@ import usersController from "../controllers/users_conroller";
  *           application/json:
  *             schema:
  *               type: boolean
+ *               example: true
  *       404:
  *         description: User not found
  *       500:
  *         description: Server error
  */
-router.get('/is-doctor', usersController.isDoctor.bind(usersController));
+router.get('/is-doctor', authMiddleware, usersController.isDoctor.bind(usersController));
+
+/**
+ * @swagger
+ * /users/update_user:
+ *   get:
+ *     summary: update user
+ *     description: update user
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: query
+ *         name: username
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The username of the user
+ *         example: "bobTheNotBuilder"
+ *     responses:
+ *       200:
+ *         description: Returns true if the user is a doctor, false otherwise
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: boolean
+ *               example: true
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
+router.get('/update_user', authMiddleware, usersController.isDoctor.bind(usersController));
 
 export default router;

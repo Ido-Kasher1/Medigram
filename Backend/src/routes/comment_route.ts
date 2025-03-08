@@ -20,6 +20,7 @@ import { authMiddleware } from "../controllers/auth_controller";
  *         - comment
  *         - owner
  *         - postId
+ *         - isOwnerDoctor
  *       properties:
  *         _id:
  *           type: string
@@ -33,11 +34,15 @@ import { authMiddleware } from "../controllers/auth_controller";
  *         postId:
  *           type: string
  *           description: Associated post ID
+ *        isOwnerDoctor:
+ *          type: boolean
+ *          description: Indicates if the comment owner is a doctor
  *       example:
  *         _id: "245234t234234r234r23f4"
  *         comment: "Nice Post"
  *         owner: "324vt23r4tr234t245tbv45by"
  *         postId: "245234tasd34234r2asdad23f4"
+ *         isOwnerDoctor: false
  */
 
 /**
@@ -82,7 +87,7 @@ import { authMiddleware } from "../controllers/auth_controller";
  *       500:
  *         description: Server error
  */
-router.post("/", commentsController.create.bind(commentsController));
+router.post("/", authMiddleware, commentsController.create.bind(commentsController));
 
 /**
  * @swagger
@@ -109,7 +114,7 @@ router.post("/", commentsController.create.bind(commentsController));
  *       500:
  *         description: Server error
  */
-router.delete("/:id", commentsController.deleteItem.bind(commentsController));
+router.delete("/:id", authMiddleware, commentsController.deleteItem.bind(commentsController));
 
 /**
  * @swagger

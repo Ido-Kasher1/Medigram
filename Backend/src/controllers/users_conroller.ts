@@ -7,11 +7,12 @@ class UsersController extends BaseController<IUser> {
         super(userModel);
     }
     async isDoctor(req: Request, res: Response) {
-        const user = await userModel.findById(req.params._id);
+        console.log(req.params.userId)
+        const user = await userModel.findById(req.params.userId);
         if (!user) {
             res.status(404).send("user not found");
         }
-        res.status(200).json(user?.is_doctor);
+        res.status(200).json(user?.isDoctor);
     }
 
 }

@@ -4,6 +4,7 @@ export interface IComments {
   comment: string;
   owner: string;
   postId: string;
+  isOwnerDoctor: boolean;
 }
 const commentsSchema = new mongoose.Schema<IComments>({
   comment: {
@@ -16,6 +17,10 @@ const commentsSchema = new mongoose.Schema<IComments>({
   },
   postId: {
     type: String,
+    required: true,
+  },
+  isOwnerDoctor: {
+    type: Boolean,
     required: true,
   },
 });
