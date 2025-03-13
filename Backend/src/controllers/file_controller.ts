@@ -1,7 +1,7 @@
-import express from "express";
+import express, {Request, Response, NextFunction} from "express";
 import path from "path";
 
-const secureStaticMiddleware = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+const secureStaticMiddleware = (req: Request, res: Response, next: NextFunction) => {
   const userId = req.params.userid; // Get the logged-in user's ID
 
   if (!userId) {

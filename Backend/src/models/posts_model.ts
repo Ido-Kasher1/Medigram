@@ -4,6 +4,7 @@ export interface IPost {
   title: string;
   content: string;
   owner: string;
+  imageName?: string;
 }
 
 const postSchema = new mongoose.Schema<IPost>({
@@ -15,6 +16,10 @@ const postSchema = new mongoose.Schema<IPost>({
   owner: {
     type: String,
     required: true,
+  },
+  imageName: {
+    type: String,
+    required: false,
   },
 });
 

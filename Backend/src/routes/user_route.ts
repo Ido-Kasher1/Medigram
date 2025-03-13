@@ -54,7 +54,7 @@ import { authMiddleware } from "../controllers/auth_controller";
 /**
  * @swagger
  * /users/is-doctor:
- *   get:
+ *   post:
  *     summary: Check if the user is a doctor
  *     description: Check if the user is a doctor
  *     tags:
@@ -74,7 +74,33 @@ import { authMiddleware } from "../controllers/auth_controller";
  *       500:
  *         description: Server error
  */
-router.get('/is-doctor', authMiddleware, usersController.isDoctor.bind(usersController));
+router.post('/is-doctor', authMiddleware, usersController.isDoctor.bind(usersController));
+
+/**
+ * @swagger
+ * /users/username:
+ *   post:
+ *     summary: Get user username
+ *     description: Get user username
+ *     tags:
+ *       - Users
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: get user username
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: string
+ *               example: bobTheBuilder
+ *       404:
+ *         description: User not found
+ *       500:
+ *         description: Server error
+ */
+router.post('/username', authMiddleware, usersController.getUserName.bind(usersController));
+
 
 /**
  * @swagger

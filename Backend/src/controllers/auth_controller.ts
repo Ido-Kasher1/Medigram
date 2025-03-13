@@ -188,7 +188,6 @@ type Payload = {
 
 export const authMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const authorization = req.header('authorization');
-    console.log(authorization);
     const token = authorization && authorization.split(' ')[1];
 
     if (!token) {

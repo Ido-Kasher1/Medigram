@@ -1,0 +1,22 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.modal-open {
+  overflow: hidden;
+}
+
+.modal-open::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8); /* Darker background */
+  z-index: 1040; /* Ensure it is behind the modal but above other content */
+}

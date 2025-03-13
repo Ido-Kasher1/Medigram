@@ -34,9 +34,9 @@ import { authMiddleware } from "../controllers/auth_controller";
  *         postId:
  *           type: string
  *           description: Associated post ID
- *        isOwnerDoctor:
- *          type: boolean
- *          description: Indicates if the comment owner is a doctor
+ *         isOwnerDoctor:
+ *           type: boolean
+ *           description: Indicates if the comment owner is a doctor
  *       example:
  *         _id: "245234t234234r234r23f4"
  *         comment: "Nice Post"
