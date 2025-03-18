@@ -6,7 +6,7 @@ export interface User {
     _id: string
     email: string
     username: string
-    is_doctor: boolean
+    isDoctor: boolean
     refreshToken: string[]
     password: string
     imageName: string
@@ -15,7 +15,7 @@ export interface User {
 export interface SendUserDTO {
     email: string
     username: string
-    is_doctor: boolean
+    isDoctor: boolean
     password: string
 }
 

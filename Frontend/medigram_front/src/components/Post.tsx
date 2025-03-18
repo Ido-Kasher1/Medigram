@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaHeart, FaRegHeart, FaRegComment } from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaRegComment, FaUserMd } from "react-icons/fa";
 import useComments from "../hooks/useComments";
 import imageService from "../services/imageService";
 import useUser from "../hooks/useUser";
@@ -31,7 +31,7 @@ const Post: React.FC<PostProps> = ({ owner,userId, caption, postId, imageName })
       }
     };
 
-    const fetchProfileImage = async () => {
+    const fetchProfileImage = async () => {      
       if (owner) {
         const url = await imageService.getProfileImage(owner.imageName);
         setProfileImg(url);
@@ -53,6 +53,7 @@ const Post: React.FC<PostProps> = ({ owner,userId, caption, postId, imageName })
           height="40"
         />
         <strong>{owner?.username}</strong>
+        {owner.isDoctor && <FaUserMd className="ms-2" />}
       </div>
 
       {/* Post Image */}
@@ -84,6 +85,7 @@ const Post: React.FC<PostProps> = ({ owner,userId, caption, postId, imageName })
             {comments.slice(0, 3).map((comment, index) => (
               <p key={index} className="mb-1">
                 <strong>{comment.username}:</strong> {comment.comment}
+                {comment.isOwnerDoctor  && <FaUserMd className="ms-2" />} 
               </p>
             ))}
           </div>

@@ -60,7 +60,6 @@ const Dialog = <T extends FieldValues,>({
   }, [show]);
 
   useEffect(() => {
-    console.log("here")
     if (img) {
       setPreview(URL.createObjectURL(img));
     }

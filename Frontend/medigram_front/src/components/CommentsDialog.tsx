@@ -4,6 +4,7 @@ import commentService, { Comment } from "../services/commentService";
 import Dialog from "./Dialog";
 import { z } from "zod";
 import imageService from "../services/imageService";
+import { FaUserMd } from "react-icons/fa";
 
 interface CommentsDialogProps {
   show: boolean;
@@ -46,7 +47,7 @@ const CommentsDialog: React.FC<CommentsDialogProps> = ({
       let comment = {
         username: user.username,
         comment: newComment,
-        isOwnerDoctor: user.is_doctor,
+        isOwnerDoctor: user.isDoctor,
         postId: postId,
       };
       setComments([...comments, comment]);
@@ -76,6 +77,7 @@ const CommentsDialog: React.FC<CommentsDialogProps> = ({
           {comments.map((comment, index) => (
             <div key={index} className="mb-2">
               <strong>{comment.username}:</strong> {comment.comment}
+              {comment.isOwnerDoctor  && <FaUserMd className="ms-2" />}
             </div>
           ))}
         </div>
