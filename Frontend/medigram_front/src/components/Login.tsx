@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import Dialog from "./Dialog";
 import { z } from "zod";
-import { isTokenValid, login } from "../services/authService";
+import { googleSignIn, isTokenValid, login } from "../services/authService";
 import { useNavigate } from "react-router-dom";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 
 const Login: React.FC = () => {
   const [show, setShow] = useState(true);
@@ -46,6 +47,15 @@ const Login: React.FC = () => {
     { name: "password", label: "סיסמא", type: "password" },
   ];
 
+  const googlErrorMessage = () => {
+    alert("Google login failed");
+  };
+
+  const googleResponseMessage = async (response: CredentialResponse) => {
+    await googleSignIn(response);
+    nevigate("/");
+  };
+
   return (
     <div>
       <Dialog
@@ -63,6 +73,7 @@ const Login: React.FC = () => {
         >
           הרשמה
         </button>
+        <GoogleLogin onSuccess={googleResponseMessage} onError={googlErrorMessage} />
       </Dialog>
     </div>
   );

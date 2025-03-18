@@ -1,6 +1,7 @@
 import {apiClient, CanceledError } from "./api-client";
 import { AxiosError } from "axios";
 import { SendUserDTO } from "./userService";
+import { CredentialResponse } from "@react-oauth/google";
 
 export { CanceledError }
 
@@ -119,4 +120,33 @@ const addProfileImage = async (image: File) => {
     return { request, abort: () => abortController.abort };
 }
 
-export {isTokenValid, login, register, logout, addProfileImage};
+const googleSignIn = async (response: CredentialResponse) => {
+    const abortController = new AbortController();
+    try {
+        const res = await apiClient.post<{ accessToken: string }>("/auth/google-login", {
+            credential: response.credential,
+        }, {
+            signal: abortController.signal,
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+        if (res.status === 200) {
+            localStorage.setItem("accessToken", res.data.accessToken);
+            return true;
+        } else {
+            console.error("Failed to login");
+            return false;
+        }
+    } catch (error) {
+        if (error instanceof CanceledError) {
+            console.log("Request canceled");
+        } else {
+            console.error("Error logging in:", error);
+        }
+        return false;
+    }
+}
+    
+
+export {isTokenValid, login, register, logout, addProfileImage, googleSignIn};

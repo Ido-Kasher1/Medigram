@@ -1,6 +1,7 @@
 import express from "express";
 const router = express.Router();
 import authController, { authMiddleware } from "../controllers/auth_controller";
+import { auth } from "google-auth-library";
 
 /**
 * @swagger
@@ -71,6 +72,8 @@ import authController, { authMiddleware } from "../controllers/auth_controller";
 *               $ref: '#/components/schemas/User'
 */
 router.post("/register", authController.register);
+
+router.post("/google-login", authController.googleSignin);
 
 /**
  * @swagger
