@@ -53,28 +53,28 @@ import { authMiddleware } from "../controllers/auth_controller";
 
 /**
  * @swagger
- * /users/is-doctor:
+ * /users/user:
  *   post:
- *     summary: Check if the user is a doctor
- *     description: Check if the user is a doctor
+ *     summary: Get user
+ *     description: Get user
  *     tags:
  *       - Users
  *     security:
  *       - bearerAuth: []
  *     responses:
  *       200:
- *         description: Get if the user is a doctor or not
+ *         description: get user
  *         content:
  *           application/json:
  *             schema:
- *               type: boolean
- *               example: true
+ *               type: string
+ *               example: bobTheBuilder
  *       404:
  *         description: User not found
  *       500:
  *         description: Server error
  */
-router.post('/is-doctor', authMiddleware, usersController.isDoctor.bind(usersController));
+router.post('/user', authMiddleware, usersController.getUser.bind(usersController));
 
 /**
  * @swagger
@@ -99,7 +99,7 @@ router.post('/is-doctor', authMiddleware, usersController.isDoctor.bind(usersCon
  *       500:
  *         description: Server error
  */
-router.post('/username', authMiddleware, usersController.getUserName.bind(usersController));
+router.post('/username', authMiddleware, usersController.getUsername.bind(usersController));
 
 
 /**
@@ -133,6 +133,6 @@ router.post('/username', authMiddleware, usersController.getUserName.bind(usersC
  *       500:
  *         description: Server error
  */
-router.get('/update_user', authMiddleware, usersController.isDoctor.bind(usersController));
+router.post('/update_user', authMiddleware, usersController.updateUser.bind(usersController));
 
 export default router;

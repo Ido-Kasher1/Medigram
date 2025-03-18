@@ -1,6 +1,6 @@
 import express from "express";
 const router = express.Router();
-import authController from "../controllers/auth_controller";
+import authController, { authMiddleware } from "../controllers/auth_controller";
 
 /**
 * @swagger
@@ -189,6 +189,44 @@ router.post("/refresh", authController.refresh);
  *         description: Server error
  */
 router.post("/logout", authController.logout);
+
+/**
+ * @swagger
+ * /auth/verify-token:
+ *   get:
+ *     summary: Verify token validity
+ *     tags: [Auth]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Token is valid
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 valid:
+ *                   type: boolean
+ *                   example: true
+ *       401:
+ *         description: Invalid token
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 valid:
+ *                   type: boolean
+ *                   example: false
+ *                 message:
+ *                   type: string
+ *                   example: "Invalid token"
+ */
+router.get("/verify-token", authMiddleware, (req, res) => {
+    res.status(200).json({ valid: true });
+});
+
 
 
 export default router;

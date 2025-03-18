@@ -20,3 +20,8 @@ body, html {
   background-color: rgba(0, 0, 0, 0.8); /* Darker background */
   z-index: 1040; /* Ensure it is behind the modal but above other content */
 }
+
+html, body, #root {
+  height: 100%;
+}
+

@@ -1,6 +1,6 @@
 import axios, { CanceledError } from "axios";
 
-const baseImagesUrl = "http://localhost:3030/public/";
+const baseImagesUrl = "http://localhost:3030/public";
 
 const apiClient = axios.create({
     baseURL: "http://localhost:3030",

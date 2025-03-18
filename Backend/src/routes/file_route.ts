@@ -4,6 +4,7 @@ import path from "path";
 import fs from "fs";
 import postsController from "../controllers/posts_controller";
 import { authMiddleware } from "../controllers/auth_controller";
+import users_conroller from "../controllers/users_conroller";
 
 const router = express.Router();
 const base = `${process.env.DOMAIN_BASE}:${process.env.PORT}/`;
@@ -41,7 +42,7 @@ const profileStorage = multer.diskStorage({
       return cb(new Error("Unauthorized"), "");
     }
 
-    const userDir = path.join(__dirname, "../../profile/posts", userId);
+    const userDir = path.join(__dirname, "../../public/profile/");
 
     if (!fs.existsSync(userDir)) {
       console.log("creating directory");
@@ -51,8 +52,9 @@ const profileStorage = multer.diskStorage({
     cb(null, userDir);
   },
   filename: function (req, file, cb) {
+    const userId = req.params.userId;
     const ext = path.extname(file.originalname);
-    cb(null, `${Date.now()}${ext}`);
+    cb(null, `${userId}${ext}`);
   },
 });
 
@@ -143,14 +145,6 @@ router.post("/posts", authMiddleware, uploadPost.single("file"), postsController
  *       500:
  *         description: Internal server error
  */
-router.post("/profile", authMiddleware, uploadProfile.single("file"), (req: Request, res: Response) => {
-  if (!req.file) {
-    res.status(400).json({ message: "No file uploaded" });
-    return;
-  }
-
-  const userId = req.params.userId;
-  res.status(200).send({ url: `${base}profile/posts/${userId}/${req.file.filename}` });
-});
+router.post("/profile", authMiddleware, uploadProfile.single("file"), users_conroller.updateUserProfileImage.bind(users_conroller));
 
 export default router;

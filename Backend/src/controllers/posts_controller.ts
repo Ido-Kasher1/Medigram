@@ -2,6 +2,7 @@ import postModel, { IPost } from "../models/posts_model";
 import { Request, Response } from "express";
 import BaseController from "./base_controller";
 import mongoose from "mongoose";
+import likeModel, { ILike } from "../models/likes_model";
 
 class PostsController extends BaseController<IPost> {
   constructor() {
@@ -12,22 +13,96 @@ class PostsController extends BaseController<IPost> {
     const userId = req.params.userId;
     const post = {
       ...req.body,
-      owner: userId,
+      owner: new mongoose.Types.ObjectId(userId)
     };
     req.body = post;
     super.create(req, res);
   }
 
+  async getAll(req: Request, res: Response) {
+
+    const filter = req.query.owner;
+    try {
+        if (filter) {
+            const item = await this.model.find({ owner: filter }).populate('owner', 'username imageName isDoctor');
+            res.send(item);
+        } else {
+            const items = await this.model.find().populate('owner', 'username imageName isDoctor');
+            res.send(items);
+        }
+    } catch (error) {
+        res.status(400).send(error);
+    }
+  };
+
+
+  async getLikeStatus(req: Request, res: Response) {
+    try{
+      const userId = req.params.userId;
+      if(!userId){
+        res.status(400).json({ message: "No userId" });
+        return;
+      }
+      const postId = req.body.postId;
+      if(!postId){
+        res.status(400).json({ message: "No postId" });
+        return;
+      }
+      let like = await likeModel.findOne({ userId, postId });
+      if(like === null||like === undefined){
+        await likeModel.create({ userId, postId, like: false });
+        like = await likeModel.findOne({ userId, postId });
+      }
+      const likesCount = await likeModel.countDocuments({ postId, isLiked: true });
+  
+      res.status(200).json({ liked : like?.isLiked, likesCount: likesCount });
+    } catch (error) {
+      console.error("Error fetching like status:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+
+  async toggleLike(req: Request, res: Response) {
+    try {
+      const userId = req.params.userId;
+      if(!userId){
+        res.status(400).json({ message: "No userId" });
+        return;
+      }
+      const postId = req.body.postId;
+      if(!postId){
+        res.status(400).json({ message: "No postId" });
+        return;
+      }
+      let like = await likeModel.findOne({ userId, postId });
+      if(like === null||like === undefined){
+        await likeModel.create({ userId, postId, isLiked: false });
+        like = await likeModel.findOne({ userId, postId });
+      }
+      if (like) {
+        (like as ILike).isLiked = req.body.newLikeStatus;
+        await like.save();
+      }
+      const likesCount = await likeModel.countDocuments({ postId, isLiked: true });
+      res.status(200).json({ liked : like?.isLiked, likesCount: likesCount });
+    } catch (error) {
+      console.error("Error toggling like:", error);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  }
+    
+
   async updatePostFile(req: Request, res: Response) {
+    
     if (!req.file) {
       res.status(400).json({ message: "No file uploaded" });
       return;
     }
-
+    
     const userId = req.params.userId;
-    const postId = req.body.postId; // Assuming postId is sent in the body
+    const postId = req.body.postId; 
     const base = `${process.env.DOMAIN_BASE}:${process.env.PORT}/`;
-
+    
     if (!mongoose.Types.ObjectId.isValid(postId)) {
       res.status(400).json({ message: "Invalid postId" });
       return;
@@ -46,7 +121,6 @@ class PostsController extends BaseController<IPost> {
       }
 
       res.status(200).send({ url: `${base}public/posts/${userId}/${req.file.filename}` });
-      console.log(updatedPost)
     } catch (error) {
       console.error("Error updating post:", error);
       res.status(500).json({ message: "Internal server error" });

@@ -4,6 +4,7 @@ import userModel, { IUser } from '../models/users_model';
 import { NextFunction, Request, Response } from 'express';
 import { Document } from 'mongoose';
 import ms from 'ms';
+import { error } from 'console';
 
 const register = async (req: Request, res: Response) => {
     try {
@@ -18,6 +19,7 @@ const register = async (req: Request, res: Response) => {
         });
         res.status(200).send(user);
     } catch (err) {
+        console.log(err);
         res.status(400).send(err);
     }
 };
@@ -148,6 +150,7 @@ const logout = async (req: Request, res: Response) => {
         await user.save();
         res.status(200).send("success");
     } catch (err) {
+        console.log(err);
         res.status(400).send("fail");
     }
 };

@@ -1,23 +1,23 @@
 import { useEffect, useState } from "react";
-import postService, { CanceledError, PostDTO, PostModel, SendPostDTO } from "../services/postService";
+import postService, { CanceledError, PostModel, SendPostDTO } from "../services/postService";
 
-const usePosts = () => {
+const usePosts = (userId?: string) => {
   const [posts, setPosts] = useState<PostModel[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     setLoading(true);
-    const { request, abort } = postService.getAllPosts();
+    const { request, abort } = userId ? postService.getUserPosts(userId) : postService.getAllPosts();
+    
     request
       .then((response) => {
-        const transformedPosts = response.data.map((postDTO: PostDTO) => ({
-          id: postDTO._id,
-          title: postDTO.title,
-          content: postDTO.content,
-          owner: postDTO.owner,
-          imageName: postDTO.imageName,
-          profileImg: "",
+        const transformedPosts = response.data.map((PostModel: PostModel) => ({
+          _id: PostModel._id,
+          title: PostModel.title,
+          content: PostModel.content,
+          owner: PostModel.owner,
+          imageName: PostModel.imageName,
         }));
         
         setPosts(transformedPosts);
@@ -30,12 +30,15 @@ const usePosts = () => {
       .finally(() => setLoading(false));
 
     return () => abort();
-  }, []);
+  }, [userId]);
 
-  const addPost = (newPost: SendPostDTO, image: File | null) => {
+  const addPost = async (newPost: SendPostDTO, image: File | null) => {
     //add post to the server
-    postService.addPost(newPost, image)
-    console.log("Post created successfully");
+    const {post} = await postService.addPost(newPost, image);
+    if (!post) {
+      throw new Error("Post creation failed");
+    }
+    setPosts([...posts, post]);
   }
 
   return { posts, loading, error, addPost };

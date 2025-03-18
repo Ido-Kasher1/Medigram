@@ -1,42 +1,45 @@
 import React, { useState, useEffect } from "react";
-import "bootstrap/dist/css/bootstrap.min.css";
 import { FaHeart, FaRegHeart, FaRegComment } from "react-icons/fa";
 import useComments from "../hooks/useComments";
 import imageService from "../services/imageService";
 import useUser from "../hooks/useUser";
+import useLike from "../hooks/useLike";
+import CommentsDialog from "./CommentsDialog";
+import { User } from "../services/userService";
 
 interface PostProps {
-  owner: string;
+  userId: string;
+  owner: User;
   caption: string;
   postId: string;
   imageName: string;
 }
 
-const Post: React.FC<PostProps> = ({ owner, caption, postId, imageName }) => {
-  const { comments } = useComments(postId);
-  const { username, isDoctor, loading } = useUser(owner);
+const Post: React.FC<PostProps> = ({ owner,userId, caption, postId, imageName }) => {
+  const { comments, setComments } = useComments(postId);
+  const { user } = useUser(userId);
   const [postImg, setPostImg] = useState("./images/default_post.png");
   const [profileImg, setProfileImg] = useState("./images/default_avatar.png");
-  const [liked, setLiked] = useState(false);
+  const [showComments, setShowComments] = useState(false);
+  const { liked, likesCount, toggleLike } = useLike(postId, user?._id || "");
 
   useEffect(() => {
     const fetchPostImage = async () => {
       if (imageName) {
-        const url = await imageService.getPostImage(imageName, owner);
+        const url = await imageService.getPostImage(imageName, owner._id);
         setPostImg(url);
       }
     };
 
+    const fetchProfileImage = async () => {
+      if (owner) {
+        const url = await imageService.getProfileImage(owner.imageName);
+        setProfileImg(url);
+      }
+    };
     fetchPostImage();
-    // imageService.getProfileImage(owner).request
-    //   .then((response) => setProfileImg(response.data.url))
-    //   .catch((error: any) => console.error("Error loading profile image:", error));
-  }, [postId, username, imageName, owner]);
-
-  // Handle Like Click
-  const handleLikeClick = () => {
-    setLiked((prevLiked) => !prevLiked);
-  };
+    fetchProfileImage();
+  }, [postId, imageName, owner, owner.imageName]);
 
   return (
     <div className="card mx-auto my-3" style={{ maxWidth: "50vw" }}>
@@ -49,39 +52,30 @@ const Post: React.FC<PostProps> = ({ owner, caption, postId, imageName }) => {
           width="40"
           height="40"
         />
-        <strong>{username}</strong>
+        <strong>{owner?.username}</strong>
       </div>
 
       {/* Post Image */}
-      <img src={postImg} className="card-img-top" alt="Post" />
+      <img src={postImg} className="card-img-top" style={{height: '60vh',width: '40vw' }} alt="Post" />
 
       {/* Post Actions */}
       <div className="card-body">
         <div className="d-flex justify-content-between mb-2">
           <div>
             {/* Toggle Like Icon */}
+            <span className="m-3">{likesCount}</span>
             {liked ? (
-              <FaHeart
-                size={24}
-                className="me-2 text-danger"
-                onClick={handleLikeClick}
-                style={{ cursor: "pointer" }}
-              />
+              <FaHeart size={24} className="me-2 text-danger" onClick={toggleLike} style={{ cursor: "pointer" }} />
             ) : (
-              <FaRegHeart
-                size={24}
-                className="me-2"
-                onClick={handleLikeClick}
-                style={{ cursor: "pointer" }}
-              />
+              <FaRegHeart size={24} className="me-2" onClick={toggleLike} style={{ cursor: "pointer" }} />
             )}
-            <FaRegComment size={24} className="me-2" />
+            <FaRegComment onClick={() => setShowComments(true)} size={24} className="me-2" />
           </div>
         </div>
 
         {/* Post Caption */}
         <p className="mb-1">
-          <strong>{username}</strong> {caption}
+          <strong>{owner?.username}</strong> {caption}
         </p>
 
         {/* Display First 3 Comments (if any exist) */}
@@ -89,12 +83,26 @@ const Post: React.FC<PostProps> = ({ owner, caption, postId, imageName }) => {
           <div className="mt-2">
             {comments.slice(0, 3).map((comment, index) => (
               <p key={index} className="mb-1">
-                <strong>{comment.owner}:</strong> {comment.comment}
+                <strong>{comment.username}:</strong> {comment.comment}
               </p>
             ))}
           </div>
         )}
       </div>
+
+      {user && (
+        <CommentsDialog
+          username={owner.username}
+          show={showComments}
+          comments={comments}
+          onClose={() => setShowComments(false)}
+          setComments={setComments}
+          user={user}
+          postImage={postImg}
+          caption={caption}
+          postId={postId}
+        />
+      )}
     </div>
   );
 };

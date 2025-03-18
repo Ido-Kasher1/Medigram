@@ -2,18 +2,52 @@ import {apiClient, CanceledError} from './api-client'
 
 export { CanceledError }
 
-const getUserName = (userId: string) => {
+export interface User {
+    _id: string
+    email: string
+    username: string
+    is_doctor: boolean
+    refreshToken: string[]
+    password: string
+    imageName: string
+}
+
+export interface SendUserDTO {
+    email: string
+    username: string
+    is_doctor: boolean
+    password: string
+}
+
+const getUser = () => {
     const abortController = new AbortController()
-    const request = apiClient.post<string>(`/users/username`
-        , {userId},{ signal: abortController.signal })
+    const request = apiClient.post<User>(`/users/user`
+        ,{ signal: abortController.signal })
     return { request, abort: () => abortController.abort() }
 }
 
-const isUserDoctor = (userId: string) => {
+const updateProfile = async (username: string) : Promise<User> => {
     const abortController = new AbortController()
-    const request = apiClient.post<boolean>(`/users/is-doctor`
-        ,{userId}, { signal: abortController.signal })
-    return { request, abort: () => abortController.abort() }
+    const response = await apiClient.post<User>("/users/update_user", {username:username}, {
+        signal: abortController.signal,
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+    return response.data
 }
 
-export default { getUserName, isUserDoctor }
+const getUsername = async (userId: string) => {
+    const abortController = new AbortController()
+    const response = await apiClient.post<{username: string}>(`/users/username`, 
+        { userId: userId },
+        {signal: abortController.signal,
+        headers: {
+            "Content-Type": "application/json",
+        },
+    })
+    return response.data.username
+}
+
+
+export default { getUser, getUsername, updateProfile }

@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 export interface IPost {
   title: string;
   content: string;
-  owner: string;
+  owner: mongoose.Types.ObjectId;
   imageName?: string;
 }
 
@@ -13,10 +13,7 @@ const postSchema = new mongoose.Schema<IPost>({
     required: true,
   },
   content: String,
-  owner: {
-    type: String,
-    required: true,
-  },
+  owner: { type: mongoose.Schema.Types.ObjectId, ref: "Users", required: true },
   imageName: {
     type: String,
     required: false,

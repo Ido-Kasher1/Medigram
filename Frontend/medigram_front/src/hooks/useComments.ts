@@ -6,9 +6,14 @@ const useComments = (postId: string) => {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const { request, abort } = commentService.getPostComments(postId);
-    request
-      .then((response) => setComments(response.data))
+    const requestPromise = commentService.getPostComments(postId);
+    let abort: () => void;
+
+    requestPromise
+      .then(({ comments, abort: abortFn }) => {
+        setComments(comments);
+        abort = abortFn;
+      })
       .catch((error) => {
         if (!(error instanceof CanceledError)) { // Ignore cancel error
           console.error("Comment request failed", error);
@@ -16,10 +21,10 @@ const useComments = (postId: string) => {
         }
       });
   
-    return () => abort(); // Abort request on unmount
+    return () => abort && abort(); // Abort request on unmount
   }, [postId]);
 
-  return { comments, error };
+  return { comments, error, setComments };
 };
 
 export default useComments;

@@ -1,30 +1,36 @@
 import { useEffect, useState, useRef } from "react";
 import { DefaultValues, FieldValues, Path, useForm } from "react-hook-form";
-import { z, ZodSchema } from "zod";
+import { ZodSchema } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 
 interface FieldConfig<T extends FieldValues> {
   name: keyof T;
   label: string;
-  type: "text" | "textarea" | "file";
+  type: "text" | "textarea" | "file" | "checkbox" | "password";
 }
 
 interface DialogProps<T extends FieldValues> {
+  title: string;
   show: boolean;
   onClose: () => void;
   onSubmit: (data: T) => void;
   schema: ZodSchema<T>;
   initialValues: DefaultValues<T>;
   fields: FieldConfig<T>[];
+  initialPreview?: string;
+  children?: React.ReactNode;
 }
 
 const Dialog = <T extends FieldValues,>({
+  title,
   show,
   onClose,
   onSubmit,
   schema,
   initialValues,
+  initialPreview,
   fields,
+  children,
 }: DialogProps<T>) => {
   const {
     register,
@@ -39,7 +45,7 @@ const Dialog = <T extends FieldValues,>({
   });
 
   const img = watch("img" as Path<T>);
-  const [preview, setPreview] = useState<string>("./images/upload_image_sample.png");
+  const [preview, setPreview] = useState<string>(initialPreview ? initialPreview: "" );
   const inputFileRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -54,10 +60,18 @@ const Dialog = <T extends FieldValues,>({
   }, [show]);
 
   useEffect(() => {
+    console.log("here")
     if (img) {
       setPreview(URL.createObjectURL(img));
     }
   }, [img]);
+
+  useEffect(() => {
+    reset(initialValues);
+    if (initialPreview) {
+      setPreview(initialPreview);
+    }
+  }, [initialValues, initialPreview, reset]);
 
   const onSubmitHandler = (data: T) => {
     onSubmit(data);
@@ -73,7 +87,7 @@ const Dialog = <T extends FieldValues,>({
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
-              <h5 className="modal-title">Add New Post</h5>
+              <h5 className="modal-title">{title}</h5>
               <button type="button" className="btn-close" onClick={onClose}></button>
             </div>
             <div className="modal-body">
@@ -84,6 +98,13 @@ const Dialog = <T extends FieldValues,>({
                     <input
                       {...register(field.name as Path<T>)}
                       type="text"
+                      className="form-control"
+                    />
+                  )}
+                  {field.type === "password" && (
+                    <input
+                      {...register(field.name as Path<T>)}
+                      type="password"
                       className="form-control"
                     />
                   )}
@@ -113,17 +134,26 @@ const Dialog = <T extends FieldValues,>({
                       />
                     </>
                   )}
+                  {field.type === "checkbox" && (
+                    <input
+                      {...register(field.name as Path<T>)}
+                      type="checkbox"
+                      className="form-check-input"
+                    />
+                  )}
                   {errors[field.name] && (
                     <p className="text-danger">{(errors[field.name]?.message as string) || "Invalid input"}</p>
                   )}
                 </div>
               ))}
+              {children}
             </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" onClick={onClose}>
                 ביטול
               </button>
-              <button type="button" className="btn btn-primary" onClick={handleSubmit(onSubmitHandler)}>
+              <button type="button" className="btn btn-primary"
+                onClick={handleSubmit(onSubmitHandler)}>
                 שליחה
               </button>
             </div>

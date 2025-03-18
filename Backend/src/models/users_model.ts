@@ -7,6 +7,7 @@ export interface IUser {
   _id?: string;
   refreshToken?: string[];
   isDoctor?: boolean;
+  imageName?: string;
 }
 
 const userSchema = new mongoose.Schema<IUser>({
@@ -32,6 +33,11 @@ const userSchema = new mongoose.Schema<IUser>({
     type: Boolean,
     required: true,
     default: false,
+  },
+  imageName:{
+    type: String,
+    required: false,
+    default: "",
   }
 });
 

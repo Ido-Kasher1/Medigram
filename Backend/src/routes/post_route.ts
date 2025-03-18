@@ -103,6 +103,7 @@ router.get("/" ,postsController.getAll.bind(postsController));
  */
 router.post("/",authMiddleware , postsController.create.bind(postsController));
 
+
 /**
  * @swagger
  * /posts/{id}:
@@ -160,4 +161,77 @@ router.get("/:id", postsController.getById.bind(postsController));
  */
 router.delete("/:id", authMiddleware, postsController.deleteItem.bind(postsController));
 
+
+/**
+ * @swagger
+ * /posts/likes/status:
+ *   put:
+ *     summary: Gets the like status of a post
+ *     description: Gets the like status of a post
+ *     tags:
+ *       - Posts
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               postId:
+ *                 type: string
+ *                 description: The id of the post
+ *             required:
+ *               - postId
+ *     responses:
+ *       200:
+ *         description: Post updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Post'
+ *       404:
+ *         description: Post not found
+ *       500:
+ *         description: Server error
+ */
+router.post("/likes/status", authMiddleware, postsController.getLikeStatus.bind(postsController));
+
+
+/**
+ * @swagger
+ * /posts/likes/likeUpdate:
+ *   put:
+ *     summary: Updates the like status of a post
+ *     description: Updates the like status of a post
+ *     tags:
+ *       - Posts
+ *     security:
+ *       - bearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               postId:
+ *                 type: string
+ *                 description: The id of the post
+ *             required:
+ *               - postId
+ *     responses:
+ *       200:
+ *         description: Post updated successfully
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/Post'
+ *       404:
+ *         description: Post not found
+ *       500:
+ *         description: Server error
+ */
+router.post("/likes/likeUpdate", authMiddleware, postsController.toggleLike.bind(postsController));
 export default router;
