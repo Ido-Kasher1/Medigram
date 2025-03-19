@@ -8,39 +8,70 @@ const usePosts = (userId?: string) => {
 
   useEffect(() => {
     setLoading(true);
-    const { request, abort } = userId ? postService.getUserPosts(userId) : postService.getAllPosts();
-    
-    request
-      .then((response) => {
-        const transformedPosts = response.data.map((PostModel: PostModel) => ({
-          _id: PostModel._id,
-          title: PostModel.title,
-          content: PostModel.content,
-          owner: PostModel.owner,
-          imageName: PostModel.imageName,
-        }));
-        
-        setPosts(transformedPosts);
-      })
-      .catch((error) => {
-        if (!(error instanceof CanceledError)) {
-          setError(error.message);
-        }
-      })
-      .finally(() => setLoading(false));
+    let userPostsAbort: () => void;
+    let aiPostsAbort: () => void;
+    const fetchPosts = async () => {
+      try {
+        const { request: userPostsRequest, abort: userPostsAbortFn } = userId ? postService.getUserPosts(userId) : postService.getAllPosts();
+        userPostsAbort = userPostsAbortFn;
+        const { request: aiPostsRequest, abort: aiPostsAbortFn } = postService.getAiPosts();
+        aiPostsAbort = aiPostsAbortFn;
 
-    return () => abort();
+        const [userPostsResponse, aiPostsResponse] = await Promise.all([userPostsRequest, aiPostsRequest]);
+
+        const transformedUserPosts = userPostsResponse.data.map((post: PostModel) => ({
+          _id: post._id,
+          title: post.title,
+          content: post.content,
+          owner: post.owner,
+          imageName: post.imageName,
+        }));
+
+        console.log(aiPostsResponse.data);
+        const transformedAiPosts = aiPostsResponse.data.map((post: PostModel) => ({
+          _id: post._id,
+          title: post.title,
+          content: post.content,
+          owner: post.owner,
+          imageName: post.imageName,
+        }));
+        setPosts([...transformedUserPosts, ...transformedAiPosts]);
+      } catch (error) {
+        if (!(error instanceof CanceledError)) {
+          if (error instanceof Error) {
+            setError(error.message);
+          } else {
+            setError("An unknown error occurred");
+          }
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPosts();
+
+    return () => {
+      userPostsAbort();
+      aiPostsAbort();
+    };
   }, [userId]);
 
   const addPost = async (newPost: SendPostDTO, image: File | null) => {
-    //add post to the server
-    const {post} = await postService.addPost(newPost, image);
+    const { post } = await postService.addPost(newPost, image);
+    console.log(post);
     if (!post) {
       throw new Error("Post creation failed");
     }
     setPosts([...posts, post]);
-  }
+  };
 
-  return { posts, loading, error, addPost };
+  const deletePost = async (postId: string) => {
+    await postService.deletePost(postId);
+    setPosts(posts.filter((post) => post._id !== postId));
+  };
+
+  return { posts, loading, error, addPost, deletePost };
 };
+
 export default usePosts;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { FaHeart, FaRegHeart, FaRegComment, FaUserMd } from "react-icons/fa";
+import { FaHeart, FaRegHeart, FaRegComment, FaUserMd, FaTrash } from "react-icons/fa";
 import useComments from "../hooks/useComments";
 import imageService from "../services/imageService";
 import useUser from "../hooks/useUser";
@@ -13,9 +13,11 @@ interface PostProps {
   caption: string;
   postId: string;
   imageName: string;
+  ableToDeletePost?: boolean;
+  deletePost?: (postId: string) => void;
 }
 
-const Post: React.FC<PostProps> = ({ owner,userId, caption, postId, imageName }) => {
+const Post: React.FC<PostProps> = ({ owner, userId, caption, postId, imageName, ableToDeletePost, deletePost}) => {
   const { comments, setComments } = useComments(postId);
   const { user } = useUser(userId);
   const [postImg, setPostImg] = useState("./images/default_post.png");
@@ -54,6 +56,12 @@ const Post: React.FC<PostProps> = ({ owner,userId, caption, postId, imageName })
         />
         <strong>{owner?.username}</strong>
         {owner.isDoctor && <FaUserMd className="ms-2" />}
+        {ableToDeletePost && deletePost && <FaTrash
+          size={24}
+          className="ms-auto text-danger"
+          onClick={() => deletePost(postId)} // Add delete button
+          style={{ cursor: "pointer" }}
+        />}
       </div>
 
       {/* Post Image */}

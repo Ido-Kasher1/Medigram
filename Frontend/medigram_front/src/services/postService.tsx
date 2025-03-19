@@ -152,4 +152,21 @@ const addPostImage = async (image: File | null, postId: string) => {
   }
 };
 
-export default { getAllPosts, addPost, getLikeStatus, sendLikeRequest, getUserPosts };
+const deletePost = async (postId: string) => {
+  const abortController = new AbortController();
+  const response = await apiClient.delete<PostModel[]>(`/posts/${postId}`, {
+    signal: abortController.signal,
+  });
+  return { posts: response.data, abort: () => abortController.abort() };
+}
+
+const getAiPosts = () => {
+  const abortController = new AbortController();
+  // const request = apiClient.get<PostModel[]>("/ai_data/ai-content", {
+  //   signal: abortController.signal,
+  // });
+  const request = {data:[]} as any;
+  return { request, abort: () => abortController.abort() };
+};
+
+export default { getAllPosts, addPost, getLikeStatus, deletePost, sendLikeRequest, getUserPosts, getAiPosts};

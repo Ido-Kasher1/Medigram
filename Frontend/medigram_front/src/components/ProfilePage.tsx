@@ -31,7 +31,7 @@ const ProfilePage: React.FC = () => {
   }, [] );
   
   let { user } = useUser(userId);
-  const { posts, loading, error } = usePosts(userId);
+  const { posts, loading, error, deletePost} = usePosts(userId);
 
   useEffect(() => {
     const fetchProfileImage = async () => {
@@ -94,6 +94,8 @@ const ProfilePage: React.FC = () => {
               postId={postItem._id}
               caption={postItem.content}
               imageName={postItem.imageName}
+              ableToDeletePost={true}
+              deletePost={deletePost}
             />
           </div>
         ))}

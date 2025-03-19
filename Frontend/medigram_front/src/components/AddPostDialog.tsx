@@ -26,7 +26,7 @@ const AddPostDialog: React.FC<AddPostDialogProps> = ({
   const initialPreview = "./images/upload_image_sample.png";
 
   const fields: { name: "title" | "content" | "img"; label: string; type: "text" | "textarea" | "file" }[] = [
-      { name: "img", label: "תמונה", type: "file" },
+    { name: "img", label: "תמונה", type: "file" },
     { name: "title", label: "כותרת", type: "text" },
     { name: "content", label: "ערך", type: "textarea" },
   ];
