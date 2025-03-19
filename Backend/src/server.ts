@@ -10,8 +10,8 @@ import authRoutes from "./routes/auth_route";
 import fileRoute from "./routes/file_route";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUI from "swagger-ui-express";
-import { authMiddleware } from "./controllers/auth_controller";
-import secureStaticMiddleware from "./controllers/file_controller";
+import aiRoute from "./routes/ai_route";
+import rateLimit from 'express-rate-limit';
 const port = process.env.PORT;
 
 
@@ -23,6 +23,12 @@ app.use((req, res, next) => {
   res.header("Access-Control-Allow-Headers", "*");
   res.header("Access-Control-Allow-Methods", "*");
   next();
+});
+
+const apiLimiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 60,
+  message: 'Too many requests from this IP, please try again after a minute',
 });
 
 // app.use(express.static("front"));
@@ -55,7 +61,7 @@ app.use("/comments", commentsRoute);
 app.use("/users", usersRoute);
 app.use("/auth", authRoutes);
 app.use("/files", fileRoute);
-// app.use("/public", authMiddleware, secureStaticMiddleware, express.static("public"));
+app.use("/ai_data", apiLimiter, aiRoute)
 app.use("/public", express.static("public"));
 
 const db = mongoose.connection;

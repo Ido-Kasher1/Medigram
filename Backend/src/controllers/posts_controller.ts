@@ -15,12 +15,16 @@ class PostsController extends BaseController<IPost> {
       ...req.body,
       owner: new mongoose.Types.ObjectId(userId)
     };
-    req.body = post;
-    super.create(req, res);
+    try {
+      const createdPost = await this.model.create(post);
+      const populatedPost = await createdPost.populate('owner', 'username imageName isDoctor');
+      res.status(201).send(populatedPost);
+    } catch (error) {
+      res.status(400).send(error);
+    }
   }
 
   async getAll(req: Request, res: Response) {
-
     const filter = req.query.owner;
     try {
         if (filter) {
