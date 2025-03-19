@@ -34,15 +34,15 @@ const CommentsDialog: React.FC<CommentsDialogProps> = ({
 
   useEffect(() => {
     const fetchProfileImage = async () => {
-        if (user) {
-          const url = await imageService.getProfileImage(user.imageName);
-          setProfileImage(url);
-        }
-      };
+      if (user) {
+        const url = await imageService.getProfileImage(user.imageName);
+        setProfileImage(url);
+      }
+    };
 
     fetchProfileImage();
   }, [user]);
-  const handleAddComment = async (data: any) => {
+  const handleAddComment = async () => {
     if (newComment.trim()) {
       let comment = {
         username: user.username,
@@ -77,19 +77,19 @@ const CommentsDialog: React.FC<CommentsDialogProps> = ({
           {comments.map((comment, index) => (
             <div key={index} className="mb-2">
               <strong>{comment.username}:</strong> {comment.comment}
-              {comment.isOwnerDoctor  && <FaUserMd className="ms-2" />}
+              {comment.isOwnerDoctor && <FaUserMd className="ms-2" />}
             </div>
           ))}
         </div>
         <div className="d-flex align-items-center">
-        {profileImage && (
-          <img
-            src={profileImage}
-            alt="Profile"
-            className="rounded-circle me-2"
-            width="40"
-            height="40"
-          />)}
+          {profileImage && (
+            <img
+              src={profileImage}
+              alt="Profile"
+              className="rounded-circle me-2"
+              width="40"
+              height="40"
+            />)}
           <input
             type="text"
             className="form-control"

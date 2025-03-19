@@ -1,4 +1,4 @@
-import React, { useState, useEffect, use } from "react";
+import React, { useState, useEffect } from "react";
 import Post from "./Post";
 import ProfileUpdateDialog from "./ProfileUpdateDialog";
 import useUser from "../hooks/useUser";
@@ -16,7 +16,7 @@ const ProfilePage: React.FC = () => {
   const [profileImage, setProfileImg] = useState<string | null>(null);
   const [profileImageUpdate, setProfileImageUpdate] = useState(false);
   const navigate = useNavigate();
-  
+
   useEffect(() => {
     const checkAuthToken = async () => {
       const token = localStorage.getItem("accessToken");
@@ -28,10 +28,10 @@ const ProfilePage: React.FC = () => {
       }
     };
     checkAuthToken();
-  }, [] );
-  
+  }, []);
+
   let { user } = useUser(userId);
-  const { posts, loading, error, deletePost} = usePosts(userId);
+  const { posts, loading, error, deletePost } = usePosts(userId);
 
   useEffect(() => {
     const fetchProfileImage = async () => {
@@ -42,7 +42,7 @@ const ProfilePage: React.FC = () => {
       }
     };
     fetchProfileImage();
-  }, [userId, user]);
+  }, [userId, user, profileImageUpdate]);
 
   const handleProfileSubmit = async (data: any) => {
     if (user?.username !== data.username) {
@@ -56,7 +56,7 @@ const ProfilePage: React.FC = () => {
         setProfileImageUpdate((prev) => !prev);
       }
     }
-    if(data.img || user?.username !== data.username) {
+    if (data.img || user?.username !== data.username) {
       window.location.reload();
     }
     setShowProfileDialog(false);
@@ -100,13 +100,13 @@ const ProfilePage: React.FC = () => {
           </div>
         ))}
       </div>
-        
+
       <ProfileUpdateDialog
         show={showProfileDialog}
         onClose={() => setShowProfileDialog(false)}
         onSubmit={handleProfileSubmit}
         initialPreview={profileImage ?? "./images/default_avatar.png"}
-        initialValues={{ username: user?.username || "", img: null as File | null}}
+        initialValues={{ username: user?.username || "", img: null as File | null }}
       />
     </div>
   );

@@ -10,17 +10,17 @@ const Register: React.FC = () => {
 
   const onClose = () => setShow(false);
 
-    useEffect(() => {
-        const checkAuthToken = async () => {
-              const token = localStorage.getItem("accessToken");
-              if (token && (await isTokenValid())) {
-                nevigate("/");
-              }
-            };
-        
-            checkAuthToken();
+  useEffect(() => {
+    const checkAuthToken = async () => {
+      const token = localStorage.getItem("accessToken");
+      if (token && (await isTokenValid())) {
+        nevigate("/");
+      }
+    };
 
-    }, []);
+    checkAuthToken();
+
+  }, []);
   const initialValues = {
     email: "",
     password: "",
@@ -32,11 +32,11 @@ const Register: React.FC = () => {
   const onSubmit = async (data: typeof initialValues) => {
     if (
       await register({
-          email: data.email,
-          password: data.password,
-          username: data.username,
-          is_doctor: data.is_doctor,
-        },
+        email: data.email,
+        password: data.password,
+        username: data.username,
+        isDoctor: data.is_doctor,
+      },
         data.img
       )
     ) {
@@ -54,12 +54,12 @@ const Register: React.FC = () => {
     label: string;
     type: "text" | "password" | "file" | "checkbox";
   }[] = [
-    { name: "img", label: "תמונת פרופיל", type: "file" },
-    { name: "email", label: "אימייל", type: "text" },
-    { name: "username", label: "שם משתמש", type: "text" },
-    { name: "password", label: "סיסמא", type: "password" },
-    { name: "is_doctor", label: "רופא", type: "checkbox" },
-  ];
+      { name: "img", label: "תמונת פרופיל", type: "file" },
+      { name: "email", label: "אימייל", type: "text" },
+      { name: "username", label: "שם משתמש", type: "text" },
+      { name: "password", label: "סיסמא", type: "password" },
+      { name: "is_doctor", label: "רופא", type: "checkbox" },
+    ];
 
   const registerSchema = z.object({
     email: z.string().email(),

@@ -1,8 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import LogoutConfirmationDialog from "./LogoutConfirmationDialog";
-import ProfileUpdateDialog from "./ProfileUpdateDialog";
-import {logout} from "../services/authService";
+import { logout } from "../services/authService";
 import useUser from "../hooks/useUser";
 import imageService from "../services/imageService";
 import { useNavigate } from "react-router-dom";
@@ -12,22 +11,22 @@ interface ImageDropdownProps {
   setRenderOnLogout: (value: boolean) => void;
 }
 
-const ImageDropdown: React.FC<ImageDropdownProps> = ({userId, setRenderOnLogout}) => {
+const ImageDropdown: React.FC<ImageDropdownProps> = ({ userId, setRenderOnLogout }) => {
   const [showMenu, setShowMenu] = useState(false);
   const [profileImage, setProfileImg] = useState<string | null>(null);
-  const {user} = useUser(userId);
+  const { user } = useUser(userId);
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const nevigate = useNavigate();
 
   useEffect(() => {
     const fetchProfileImage = async () => {
-          if (user) {
-            const url = await imageService.getProfileImage(user.imageName);
-            setProfileImg(url);
-          }
-        };
-        fetchProfileImage();
+      if (user) {
+        const url = await imageService.getProfileImage(user.imageName);
+        setProfileImg(url);
+      }
+    };
+    fetchProfileImage();
 
   }, [user]);
   const toggleMenu = () => {
@@ -52,12 +51,12 @@ const ImageDropdown: React.FC<ImageDropdownProps> = ({userId, setRenderOnLogout}
   };
 
   const handleProfile = () => {
-    nevigate('/profile', {state: {userId: userId}});
+    nevigate('/profile', { state: { userId: userId } });
   };
 
   const handleLogoutConfirm = async () => {
-    if(user){
-      await logout(user?.refreshToken[user.refreshToken.length - 1]); 
+    if (user) {
+      await logout(user?.refreshToken[user.refreshToken.length - 1]);
       setRenderOnLogout(true);
     }
     setShowLogoutDialog(false);
@@ -82,11 +81,11 @@ const ImageDropdown: React.FC<ImageDropdownProps> = ({userId, setRenderOnLogout}
         style={{ cursor: "pointer" }}
       />
 
-    {showMenu && (
+      {showMenu && (
         <div className="dropup-menu dropup show position-absolute" style={{ left: 0, bottom: "100%" }}>
-        <button className="dropup-item" onClick={() => handleProfile()}>Profile</button>
-        <button className="dropup-item" onClick={() => handleLogout()}>Logout</button>
-      </div>
+          <button className="dropup-item" onClick={() => handleProfile()}>Profile</button>
+          <button className="dropup-item" onClick={() => handleLogout()}>Logout</button>
+        </div>
       )}
 
       <LogoutConfirmationDialog
