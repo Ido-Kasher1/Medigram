@@ -43,9 +43,9 @@ const Login: React.FC = () => {
     label: string;
     type: "text" | "password";
   }[] = [
-    { name: "email", label: "אימייל", type: "text" },
-    { name: "password", label: "סיסמא", type: "password" },
-  ];
+      { name: "email", label: "אימייל", type: "text" },
+      { name: "password", label: "סיסמא", type: "password" },
+    ];
 
   const googlErrorMessage = () => {
     alert("Google login failed");
@@ -71,7 +71,7 @@ const Login: React.FC = () => {
           className="btn btn-outline-primary"
           onClick={() => nevigate("/register")}
         >
-          הרשמה
+          פעם ראשונה?
         </button>
         <GoogleLogin onSuccess={googleResponseMessage} onError={googlErrorMessage} />
       </Dialog>

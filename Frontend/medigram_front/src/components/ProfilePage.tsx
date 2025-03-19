@@ -14,7 +14,7 @@ const ProfilePage: React.FC = () => {
   const [userId, setUserId] = useState("");
   const [showProfileDialog, setShowProfileDialog] = useState(false);
   const [profileImage, setProfileImg] = useState<string | null>(null);
-  const [profileImageUpdate, setProfileImageUpdate] = useState(false);
+  // const [profileImageUpdate, setProfileImageUpdate] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,14 +35,15 @@ const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     const fetchProfileImage = async () => {
+      console.log("fetchProfileImage");
       if (user) {
         const url = await imageService.getProfileImage(user.imageName);
         setProfileImg(url);
-        setProfileImageUpdate((prev) => !prev);
+        // setProfileImageUpdate((prev) => !prev);
       }
     };
     fetchProfileImage();
-  }, [userId, user, profileImageUpdate]);
+  }, [userId, user]);
 
   const handleProfileSubmit = async (data: any) => {
     if (user?.username !== data.username) {
@@ -53,7 +54,7 @@ const ProfilePage: React.FC = () => {
       if (response.status === 200) {
         const url = response.data.url;
         setProfileImg(url);
-        setProfileImageUpdate((prev) => !prev);
+        // setProfileImageUpdate((prev) => !prev);
       }
     }
     if (data.img || user?.username !== data.username) {
@@ -102,6 +103,7 @@ const ProfilePage: React.FC = () => {
       </div>
 
       <ProfileUpdateDialog
+        key={user?._id}
         show={showProfileDialog}
         onClose={() => setShowProfileDialog(false)}
         onSubmit={handleProfileSubmit}

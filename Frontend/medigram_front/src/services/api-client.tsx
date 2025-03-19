@@ -1,7 +1,7 @@
 import axios, { CanceledError } from "axios";
 
 const backend_url = import.meta.env.VITE_BACKEND_URL;
-
+console.log("backend_url", import.meta.env);
 const baseImagesUrl = `${backend_url}/public`;
 
 const apiClient = axios.create({
@@ -19,6 +19,7 @@ apiClient.interceptors.request.use(
 );
 
 const imagesClient = axios.create({
+
   baseURL: baseImagesUrl,
 });
 

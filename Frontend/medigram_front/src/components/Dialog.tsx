@@ -45,7 +45,7 @@ const Dialog = <T extends FieldValues,>({
   });
 
   const img = watch("img" as Path<T>);
-  const [preview, setPreview] = useState<string>(initialPreview ? initialPreview: "" );
+  const [preview, setPreview] = useState<string>(initialPreview ? initialPreview : "");
   const inputFileRef = useRef<HTMLInputElement | null>(null);
 
   useEffect(() => {
@@ -66,6 +66,7 @@ const Dialog = <T extends FieldValues,>({
   }, [img]);
 
   useEffect(() => {
+    console.log("reset", { initialValues, initialPreview });
     reset(initialValues);
     if (initialPreview) {
       setPreview(initialPreview);
