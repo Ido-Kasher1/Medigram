@@ -1,5 +1,5 @@
 package-lock.json
-*env*
+*.env*
 # Logs
 logs
 *.log
@@ -80,6 +80,7 @@ web_modules/
 .env.test.local
 .env.production.local
 .env.local
+.env_dev
 
 # parcel-bundler cache (https://parceljs.org/)
 .cache
