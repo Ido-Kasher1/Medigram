@@ -41,7 +41,7 @@ const options = {
       version: "1.0.0",
       description: "REST server including authentication using JWT",
     },
-    servers: [{ url: `http://localhost:${port}` }],
+    servers: [{ url: `http://10.10.246.141` }, { url: `https://10.10.246.141` }],
     components: {
       securitySchemes: {
         bearerAuth: {
@@ -63,6 +63,7 @@ app.use("/auth", authRoutes);
 app.use("/files", fileRoute);
 app.use("/ai_data", apiLimiter, aiRoute)
 app.use("/public", express.static("public"));
+app.use(express.static("front"));
 
 const db = mongoose.connection;
 db.on("error", (error) => console.error(error));
