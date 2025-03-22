@@ -113,6 +113,7 @@ dist
 .docusaurus
 
 public
+!public/posts/67d963f4057a663810796e19
 
 # Serverless directories
 .serverless/
