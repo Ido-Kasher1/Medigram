@@ -27,7 +27,7 @@ const Post: React.FC<PostProps> = ({ owner, userId, caption, postId, imageName, 
 
   useEffect(() => {
     const fetchPostImage = async () => {
-      if (imageName) {
+      if (imageName && owner) {
         const url = await imageService.getPostImage(imageName, owner._id);
         setPostImg(url);
       }
@@ -41,7 +41,7 @@ const Post: React.FC<PostProps> = ({ owner, userId, caption, postId, imageName, 
     };
     fetchPostImage();
     fetchProfileImage();
-  }, [postId, imageName, owner, owner.imageName]);
+  }, [postId, imageName, owner, owner?.imageName]);
 
   return (
     <div className="card mx-auto my-3" style={{ maxWidth: "50vw" }}>
@@ -55,7 +55,7 @@ const Post: React.FC<PostProps> = ({ owner, userId, caption, postId, imageName, 
           height="40"
         />
         <strong>{owner?.username}</strong>
-        {owner.isDoctor && <FaUserMd className="ms-2" />}
+        {owner && owner.isDoctor && <FaUserMd className="ms-2" />}
         {ableToDeletePost && deletePost && <FaTrash
           size={24}
           className="ms-auto text-danger"
@@ -102,7 +102,7 @@ const Post: React.FC<PostProps> = ({ owner, userId, caption, postId, imageName, 
 
       {user && (
         <CommentsDialog
-          username={owner.username}
+          username={owner && owner.username}
           show={showComments}
           comments={comments}
           onClose={() => setShowComments(false)}

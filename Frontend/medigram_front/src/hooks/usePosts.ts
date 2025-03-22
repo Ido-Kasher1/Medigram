@@ -14,11 +14,8 @@ const usePosts = (userId?: string) => {
       try {
         const { request: userPostsRequest, abort: userPostsAbortFn } = userId ? postService.getUserPosts(userId) : postService.getAllPosts();
         userPostsAbort = userPostsAbortFn;
-        const { request: aiPostsRequest, abort: aiPostsAbortFn } = postService.getAiPosts();
-        aiPostsAbort = aiPostsAbortFn;
 
-        const [userPostsResponse, aiPostsResponse] = await Promise.all([userPostsRequest, aiPostsRequest]);
-
+        const userPostsResponse = await userPostsRequest;
         const transformedUserPosts = userPostsResponse.data.map((post: PostModel) => ({
           _id: post._id,
           title: post.title,
@@ -27,14 +24,20 @@ const usePosts = (userId?: string) => {
           imageName: post.imageName,
         }));
 
-        console.log(aiPostsResponse.data);
-        const transformedAiPosts = aiPostsResponse.data.map((post: PostModel) => ({
-          _id: post._id,
-          title: post.title,
-          content: post.content,
-          owner: post.owner,
-          imageName: post.imageName,
-        }));
+        let transformedAiPosts: PostModel[] = [];
+        if (!userId) {
+          const { request: aiPostsRequest, abort: aiPostsAbortFn } = postService.getAiPosts();
+          aiPostsAbort = aiPostsAbortFn;
+          const aiPostsResponse = await aiPostsRequest;
+          transformedAiPosts = aiPostsResponse.data.map((post: PostModel) => ({
+            _id: post._id,
+            title: post.title,
+            content: post.content,
+            owner: post.owner,
+            imageName: post.imageName,
+          }));
+        }
+
         setPosts([...transformedUserPosts, ...transformedAiPosts]);
       } catch (error) {
         if (!(error instanceof CanceledError)) {
@@ -52,8 +55,8 @@ const usePosts = (userId?: string) => {
     fetchPosts();
 
     return () => {
-      userPostsAbort();
-      aiPostsAbort();
+      userPostsAbort && userPostsAbort();
+      aiPostsAbort && aiPostsAbort();
     };
   }, [userId]);
 

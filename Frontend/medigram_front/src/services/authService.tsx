@@ -114,7 +114,7 @@ const addProfileImage = async (image: File) => {
     const abortController = new AbortController();
     const formData = new FormData();
     formData.append("file", image as Blob);
-    const request = apiClient.post<{url:string}>("/files/profile", formData, {
+    const request = await apiClient.post<{url:string}>("/files/profile", formData, {
       signal: abortController.signal,
     });
     return { request, abort: () => abortController.abort };

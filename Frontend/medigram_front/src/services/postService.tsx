@@ -162,10 +162,10 @@ const deletePost = async (postId: string) => {
 
 const getAiPosts = () => {
   const abortController = new AbortController();
-  // const request = apiClient.get<PostModel[]>("/ai_data/ai-content", {
-  //   signal: abortController.signal,
-  // });
-  const request = {data:[]} as any;
+  const request = apiClient.get<PostModel[]>("/ai_data/ai-content", {
+    signal: abortController.signal,
+  });
+  // const request = {data:[]} as any;
   return { request, abort: () => abortController.abort() };
 };
 

@@ -66,7 +66,6 @@ const Dialog = <T extends FieldValues,>({
   }, [img]);
 
   useEffect(() => {
-    console.log("reset", { initialValues, initialPreview });
     reset(initialValues);
     if (initialPreview) {
       setPreview(initialPreview);

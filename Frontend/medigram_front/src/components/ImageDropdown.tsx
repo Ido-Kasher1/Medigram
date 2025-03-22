@@ -21,14 +21,19 @@ const ImageDropdown: React.FC<ImageDropdownProps> = ({ userId, setRenderOnLogout
 
   useEffect(() => {
     const fetchProfileImage = async () => {
-      if (user) {
+      if (user && user.imageName) {
+        console.log("imageName", user.imageName);  
         const url = await imageService.getProfileImage(user.imageName);
         setProfileImg(url);
       }
     };
-    fetchProfileImage();
+    console.log("user", user);
+    if(user){
+      fetchProfileImage();
+    }
 
   }, [user]);
+
   const toggleMenu = () => {
     setShowMenu((prev) => !prev);
   };
