@@ -21,6 +21,7 @@ class UsersController extends BaseController<IUser> {
 
   async getUsername(req: Request, res: Response): Promise<void> {
     const { userId } = req.body;
+    console.log(userId);
     try {
       const user = await userModel.findById(userId).select("username");
       if (!user) {

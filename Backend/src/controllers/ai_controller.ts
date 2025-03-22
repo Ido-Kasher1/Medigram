@@ -16,19 +16,14 @@ const openai = new OpenAI({
 });
 
 const processWithAI = async (): Promise<PostAiDTO[]> => {
-  const prompt = `Please generate a list of 1 sample posts from a user or a doctor of asking and answering questions about health. 
-  the images will be examains and mris and xrays and staff return only the following format without the numbers in validjson. in the format:
-    [{
-        title: string;
-        content: string;
-        imageName: string;
-    },
-    {
-        title: string;
-        content: string;
-        imageName: string;
-    }...]
-  pay attention that the image name will be fit to the image name from the following: xray.jpg, doctor.jpg, backmri.jpg, brokenleg.jpg`;
+  const prompt = `Return a valid JSON array (no comments, no code blocks, no explanations) with exactly 1 sample post about health question from patient or an answer doctor. Use only one of these image names: xray.jpg, doctor.jpg, backmri.jpg, brokenleg.jpg. Example format:
+[
+  {
+    "title": "Example title",
+    "content": "Example content",
+    "imageName": "xray.jpg"
+  }
+]`;
   try {
     const response = await openai.chat.completions.create({
         model: 'gpt-3.5-turbo',

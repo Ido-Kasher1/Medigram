@@ -32,8 +32,6 @@ const apiLimiter = rateLimit({
   message: 'Too many requests from this IP, please try again after a minute',
 });
 
-// app.use(express.static("front"));
-
 const options = {
   definition: {
     openapi: "3.0.0",
@@ -42,7 +40,7 @@ const options = {
       version: "1.0.0",
       description: "REST server including authentication using JWT",
     },
-    servers: [{ url: `http://10.10.246.141` }, { url: `https://10.10.246.141` }, { url: `https://node141.cs.colman.ac.il` }],
+    servers: [{ url: `http://localhost:3030` },{ url: `http://10.10.246.141` }, { url: `https://10.10.246.141` }, { url: `https://node141.cs.colman.ac.il` }],
     components: {
       securitySchemes: {
         bearerAuth: {
