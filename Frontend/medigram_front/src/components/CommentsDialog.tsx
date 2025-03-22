@@ -34,7 +34,7 @@ const CommentsDialog: React.FC<CommentsDialogProps> = ({
 
   useEffect(() => {
     const fetchProfileImage = async () => {
-      if (user) {
+      if (user && user.imageName) {
         const url = await imageService.getProfileImage(user.imageName);
         setProfileImage(url);
       }

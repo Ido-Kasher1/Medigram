@@ -14,7 +14,6 @@ const ProfilePage: React.FC = () => {
   const [userId, setUserId] = useState("");
   const [showProfileDialog, setShowProfileDialog] = useState(false);
   const [profileImage, setProfileImg] = useState<string | null>(null);
-  // const [profileImageUpdate, setProfileImageUpdate] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -35,11 +34,9 @@ const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     const fetchProfileImage = async () => {
-      console.log("fetchProfileImage");
       if (user) {
         const url = await imageService.getProfileImage(user.imageName);
         setProfileImg(url);
-        // setProfileImageUpdate((prev) => !prev);
       }
     };
     fetchProfileImage();

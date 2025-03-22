@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build && cp -r ./dist/* ../../Backend/front",
+    "build_dev": "set NODE_ENV=development && tsc -b && vite build && xcopy /E /I /Y .\\dist\\* ..\\..\\Backend\\front\\",
     "lint": "eslint .",
     "preview": "vite preview"
   },
